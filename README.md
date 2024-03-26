@@ -12,4 +12,6 @@ Projeye ait;
 - Kaynak dosyalar `src/main/java` klasöründe bulunur.
 - Tema, CSS ve JavaScript dosyaları `frontend/` klasöründe bulunur.
 - Interface dosyaları `interfaces/` klasöründe bulunur.
+- Model dosyaları `Entities/` klasöründe bulunur.
 - Konfigürasyon dosyaları `Helper/` klasöründe bulunur.
+- Data Access Layer dosyaları `Data/` klasöründe bulunur.
