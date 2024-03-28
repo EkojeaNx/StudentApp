@@ -15,3 +15,4 @@ Projeye ait;
 - Model dosyaları `Entities/` klasöründe bulunur.
 - Konfigürasyon dosyaları `Helper/` klasöründe bulunur.
 - Data Access Layer dosyaları `Data/` klasöründe bulunur.
+- Services dosyaları `Services/` klasöründe bulunur.
