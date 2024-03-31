@@ -7,10 +7,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.ekojean.studentapp.Entities.Student;
 import com.ekojean.studentapp.Helper.DBConnector;
 import com.ekojean.studentapp.Interfaces.IRepositoryDao;
 
+@Repository
 public class StudentDao implements IRepositoryDao<Student> {
 
     @Override

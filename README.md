@@ -16,3 +16,4 @@ Projeye ait;
 - Konfigürasyon dosyaları `Helper/` klasöründe bulunur.
 - Data Access Layer dosyaları `Data/` klasöründe bulunur.
 - Services dosyaları `Services/` klasöründe bulunur.
+- Controller dosyaları `Controller/` klasöründe bulunur.

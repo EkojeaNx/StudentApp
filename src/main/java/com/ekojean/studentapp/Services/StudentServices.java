@@ -2,10 +2,13 @@ package com.ekojean.studentapp.Services;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.ekojean.studentapp.Entities.Student;
 import com.ekojean.studentapp.Interfaces.IRepositoryDao;
 import com.ekojean.studentapp.Interfaces.IServices;
 
+@Service
 public class StudentServices implements IServices<Student> {
 
     private final IRepositoryDao<Student> repositoryDao;
