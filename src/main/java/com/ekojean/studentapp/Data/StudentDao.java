@@ -53,6 +53,44 @@ public class StudentDao implements IRepositoryDao<Student> {
     }
 
     @Override
+    public List<Student> getFindModelList(String filterModelText) {
+        ArrayList<Student> studentFilterList = new ArrayList<>();
+
+        String query = "SELECT * FROM student WHERE name LIKE ? OR surname LIKE ?";
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        Student student;        
+
+        try {
+            preparedStatement = DBConnector.getInstance().prepareStatement(query);
+            preparedStatement.setString(1, "%" + filterModelText + "%");
+            preparedStatement.setString(2, "%" + filterModelText + "%");
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                student = new Student(
+                    resultSet.getInt("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("surname")
+                );
+
+                studentFilterList.add(student);
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return studentFilterList;
+    }    
+
+    @Override
     public boolean addModel(Student dataModel) {
         boolean isChacked = false;
 

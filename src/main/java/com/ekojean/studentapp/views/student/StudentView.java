@@ -2,12 +2,13 @@ package com.ekojean.studentapp.views.student;
 
 import com.ekojean.studentapp.Controller.StudentController;
 import com.ekojean.studentapp.Entities.Student;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -25,18 +26,37 @@ public class StudentView extends VerticalLayout {
 
     TextField filterText = new TextField();
 
+    Button addStudentButton = new Button(new Icon(VaadinIcon.PLUS_CIRCLE));
+    Button refreshStudentButton = new Button(new Icon(VaadinIcon.REFRESH));
+    Button closeFormButton = new Button(new Icon(VaadinIcon.CLOSE));
+
+    StudentForm form;
+
     StudentController studentController;
 
     public StudentView(StudentController studentController) {
         this.studentController = studentController;
 
         configurationGrid();
+        configurationForm();
 
         add(
             getViewHeader(),
             getToolBar(),
-            grid
+            getContent()
         );
+
+        updateGridList();
+        closeForm();
+    }
+
+    private void updateGridList() {
+        grid.setItems(studentController.getStudentList(filterText.getValue()));
+    }
+
+    private void closeForm() {
+        form.setStudent(null);
+        form.setVisible(false);
     }
 
     private VerticalLayout getViewHeader() {
@@ -60,7 +80,24 @@ public class StudentView extends VerticalLayout {
         grid.addColumn(Student::getSurname).setHeader("Surname").setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.setItems(studentController.getStudentList());
+        //updateGridList();
+
+        grid.asSingleSelect().addValueChangeListener(e -> editStudent(e.getValue()));
+    }
+    
+    private void editStudent(Student student) {
+        if(student == null) {
+            closeForm();
+        } else {
+            form.setStudent(student);
+            form.setVisible(true);
+        }
+
+    }
+
+    private void configurationForm() {
+        form = new StudentForm();
+        form.setWidth("25em");
     }
 
     private HorizontalLayout getToolBar() {
@@ -71,14 +108,48 @@ public class StudentView extends VerticalLayout {
         filterText.setTooltipText("Search to name and surname");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
+
         filterText.addValueChangeListener(e -> {
-            Notification.show(filterText.getValue());
+            updateGridList();
+        });
+
+        refreshStudentButton.setTooltipText("Grid Refresh");
+        addStudentButton.setTooltipText("Student Added");
+        closeFormButton.setTooltipText("Student Edit Close");
+
+        refreshStudentButton.addClickListener(e -> {
+            updateGridList();
+        });
+
+        addStudentButton.addClickListener(e -> {
+            addStudent();
+        });
+
+        closeFormButton.addClickListener(e -> {
+            closeForm();
         });
 
         toolBar.add(
-            filterText
+            filterText,
+            refreshStudentButton,
+            addStudentButton,
+            closeFormButton
         );
 
         return toolBar;
+    }
+
+    private void addStudent() {
+        grid.asSingleSelect().clear();
+        editStudent(new Student());
+    }
+
+    private Component getContent() {
+        HorizontalLayout content = new HorizontalLayout(grid, form);
+        content.setFlexGrow(2, grid);
+        content.setFlexGrow(1, form);
+        content.setSizeFull();
+
+        return content;
     }
 }

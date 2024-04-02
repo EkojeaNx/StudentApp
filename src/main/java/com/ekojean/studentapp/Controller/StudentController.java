@@ -28,8 +28,8 @@ public class StudentController {
     }
 
     @GetMapping()    
-    public List<Student> getStudentList() {
-        return studentServices.getModelList();
+    public List<Student> getStudentList(String filterStudentText) {
+        return studentServices.getModelList(filterStudentText);
     }
 
     @PostMapping()

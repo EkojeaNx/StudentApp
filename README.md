@@ -17,3 +17,4 @@ Projeye ait;
 - Data Access Layer dosyaları `Data/` klasöründe bulunur.
 - Services dosyaları `Services/` klasöründe bulunur.
 - Controller dosyaları `Controller/` klasöründe bulunur.
+- View dosyaları `Views/` klasöründe bulunur.

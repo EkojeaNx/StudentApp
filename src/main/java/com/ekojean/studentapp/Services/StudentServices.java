@@ -18,8 +18,11 @@ public class StudentServices implements IServices<Student> {
     }
 
     @Override
-    public List<Student> getModelList() {
-        return repositoryDao.getModelList();
+    public List<Student> getModelList(String filterModelText) {
+        if(!filterModelText.isEmpty())
+            return repositoryDao.getFindModelList(filterModelText);
+        else
+            return repositoryDao.getModelList();
     }
 
     @Override
