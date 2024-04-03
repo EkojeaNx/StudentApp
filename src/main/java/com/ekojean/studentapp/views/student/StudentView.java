@@ -5,6 +5,8 @@ import com.ekojean.studentapp.Entities.Student;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Hr;
@@ -37,8 +39,19 @@ public class StudentView extends VerticalLayout {
 
     StudentController studentController;
 
+    Dialog studentDeleteDialog = new Dialog();
+
+    Button studentDeleteDialogButton = new Button("Delete");
+    Button studentCancelDialogButton = new Button("Cancel");
+
+    Student student;
+
     public StudentView(StudentController studentController) {
         this.studentController = studentController;
+
+        
+
+        configurationStudentDeleteDialog();
 
         configurationGrid();
         configurationForm();
@@ -51,6 +64,38 @@ public class StudentView extends VerticalLayout {
 
         updateGridList();
         closeForm();
+
+        
+        studentDeleteDialogButton.addClickListener(e -> {
+            studentController.deleteStudent(student);
+
+            Notification.show(student.getFullName() + " Student Deleted!");
+
+            formClear();
+
+            updateGridList();
+            studentDeleteDialog.close();
+        });
+
+        studentDeleteDialogButton.addClickShortcut(Key.ENTER);
+
+        studentCancelDialogButton.addClickListener(e -> {
+            studentDeleteDialog.close();
+        });
+
+        studentCancelDialogButton.addClickShortcut(Key.ESCAPE);
+
+    }
+
+    private void configurationStudentDeleteDialog() {
+        studentDeleteDialog.add("Are you sure you want to delete this student permanently?");
+
+        studentDeleteDialogButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        studentDeleteDialogButton.getStyle().set("margin-right", "auto");
+        studentDeleteDialog.getFooter().add(studentDeleteDialogButton);
+
+        studentCancelDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        studentDeleteDialog.getFooter().add(studentCancelDialogButton);
     }
 
     private void updateGridList() {
@@ -139,33 +184,38 @@ public class StudentView extends VerticalLayout {
 
         // Form
         form.studentSaveButton.addClickListener(e -> {
-            Student student = form.getStudent();
+            student = form.getStudent();
             
             if(student.getId() == 0) {
-
                 studentController.addStudent(student);
 
                 Notification.show(student.getFullName() + " Student Added!");
 
-                form.studentIdTF.setValue(0);
-                form.studentNameTF.setValue(null);
-                form.studentSurnameTF.setValue(null);
+                formClear();
+
+                updateGridList();
+            } else {
+                studentController.updateStudent(student);
+
+                Notification.show(student.getFullName() + " Student Updated!");
+
+                formClear();
 
                 updateGridList();
             }
-            else
-                Notification.show(student.getId() + " ID'li kayıt bulunmaktadır!");
         });
 
-        form.studentSaveButton.addClickShortcut(Key.ENTER);
+        form.studentDeleteButton.addClickListener(e -> {
+            student = form.getStudent();
 
-        form.studentDeleteButton.addClickListener(e -> {});
+            studentDeleteDialog.open();
+            
+            studentDeleteDialog.setHeaderTitle("Delete student " + student.getFullName());
+        });
 
         form.studentFormCloseButton.addClickListener(e -> {
             closeForm();
         });
-
-        form.studentFormCloseButton.addClickShortcut(Key.ESCAPE);
 
         toolBar.add(
             filterText,
@@ -177,6 +227,12 @@ public class StudentView extends VerticalLayout {
         return toolBar;
     }
 
+    private void formClear() {
+        form.studentIdTF.setValue(0);
+        form.studentNameTF.setValue("");
+        form.studentSurnameTF.setValue("");
+    }
+
     private void addStudent() {
         grid.asSingleSelect().clear();
         editStudent(new Student());
@@ -186,6 +242,7 @@ public class StudentView extends VerticalLayout {
         SplitLayout content = new SplitLayout(grid, form);
         //content.setFlexGrow(2, grid);
         //content.setFlexGrow(1, form);
+        content.setSplitterPosition(75);
         content.setSizeFull();
 
         return content;
