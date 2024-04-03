@@ -63,4 +63,10 @@ public class StudentForm extends FormLayout {
         this.student = student;
         studentBinder.readBean(student);
     }
+
+    public Student getStudent() {
+        Student student = new Student(studentIdTF.getValue(), studentNameTF.getValue(), studentSurnameTF.getValue());
+        setStudent(student);
+        return this.student;
+    }
 }

@@ -3,14 +3,17 @@ package com.ekojean.studentapp.views.student;
 import com.ekojean.studentapp.Controller.StudentController;
 import com.ekojean.studentapp.Entities.Student;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -122,12 +125,47 @@ public class StudentView extends VerticalLayout {
         });
 
         addStudentButton.addClickListener(e -> {
-            addStudent();
+            if(!form.isVisible())
+                addStudent();
+            else
+                closeForm();
         });
 
         closeFormButton.addClickListener(e -> {
             closeForm();
         });
+
+
+
+        // Form
+        form.studentSaveButton.addClickListener(e -> {
+            Student student = form.getStudent();
+            
+            if(student.getId() == 0) {
+
+                studentController.addStudent(student);
+
+                Notification.show(student.getFullName() + " Student Added!");
+
+                form.studentIdTF.setValue(0);
+                form.studentNameTF.setValue(null);
+                form.studentSurnameTF.setValue(null);
+
+                updateGridList();
+            }
+            else
+                Notification.show(student.getId() + " ID'li kayıt bulunmaktadır!");
+        });
+
+        form.studentSaveButton.addClickShortcut(Key.ENTER);
+
+        form.studentDeleteButton.addClickListener(e -> {});
+
+        form.studentFormCloseButton.addClickListener(e -> {
+            closeForm();
+        });
+
+        form.studentFormCloseButton.addClickShortcut(Key.ESCAPE);
 
         toolBar.add(
             filterText,
@@ -145,9 +183,9 @@ public class StudentView extends VerticalLayout {
     }
 
     private Component getContent() {
-        HorizontalLayout content = new HorizontalLayout(grid, form);
-        content.setFlexGrow(2, grid);
-        content.setFlexGrow(1, form);
+        SplitLayout content = new SplitLayout(grid, form);
+        //content.setFlexGrow(2, grid);
+        //content.setFlexGrow(1, form);
         content.setSizeFull();
 
         return content;
